@@ -19,42 +19,32 @@ function login() {
   const token = document.getElementById("token").value.trim();
 
   if (token === "") {
-    document.getElementById("popupkosong").classList.add("active");
-    setTimeout(() => document.getElementById("kosong").classList.add("active"), 50);
-    setTimeout(() => document.getElementById("kosong").classList.remove("active"), 1500);
-    setTimeout(() => document.getElementById("popupkosong").classList.remove("active"), 1600);
+    // tampilkan popup kosong seperti biasa
     return;
   }
 
-  // 🔹 Cek token ke GAS
-  fetch("https://script.google.com/macros/s/AKfycbwqV7l5iEq9snJzwpSpatjlQVcSyZcFHsgQsdPvW56w6dED4lTO354v1iHeIUljR1o/exec", { 
+  fetch("https://script.google.com/macros/s/AKfycbwqV7l5iEq9snJzwpSpatjljQvcSyZcFHsgQsPdPwW56dS.../exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, kandidat: "" }) // kirim kandidat kosong hanya untuk validasi token
+    body: JSON.stringify({ token })
   })
     .then(res => res.json())
     .then(data => {
       if (data.result === "success") {
-        // Simpan token saja
         localStorage.setItem("token", token);
-
-        document.getElementById("popuphsl").classList.add("active");
-        setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
-        setTimeout(() => window.location.href = "kandidat.html", 1500);
-      } else if (data.result === "invalid") {
-        document.getElementById("popupgagal").classList.add("active");
-        setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
-        setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
-        setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
+        localStorage.setItem("nama", data.nama);
+        localStorage.setItem("kelas", data.kelas);
+        window.location.href = "kandidat.html";
       } else {
-        alert("Terjadi kesalahan saat memverifikasi token.");
+        alert("Token tidak valid!");
       }
     })
     .catch(err => {
       console.error("Gagal verifikasi token:", err);
-      alert("Tidak dapat menghubungi server. Periksa koneksi internetmu.");
+      alert("Gagal menghubungi server.");
     });
 }
+
 
 
 // ===== KANDIDAT PAGE =====
@@ -171,5 +161,6 @@ window.onload = function () {
     }
   }, 1000);
 };
+
 
 
