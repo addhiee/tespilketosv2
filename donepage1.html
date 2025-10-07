@@ -15,6 +15,14 @@
 
 <body>
 
+  <script>
+  if (localStorage.getItem("token")) {
+    // kalau token masih ada, berarti belum vote → balik ke kandidat
+    window.location.href = "kandidat.html";
+  }
+</script>
+
+  
 <div class="fullscreen">
     <div class="header"> 
       <div class="content">
@@ -43,4 +51,5 @@
     <script src="script.js"></script>
 
 </body>     
+
 
