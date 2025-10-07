@@ -2,25 +2,23 @@ window.addEventListener("load", function() {
   document.body.classList.add("loaded");
 });
 
-// ===== LOGIN PAGE =====
+
 
 // Token, nama, dan kelas
-const daftarPemilih = {
-  "bsaiuU7c": { nama: "Ahmad Affandi", kelas: "XI IPA 1" },
-  "tokencb1": { nama: "Budi Santoso", kelas: "XI IPA 2" },
-  "tokencb2": { nama: "Citra Lestari", kelas: "XI IPS 1" },
-  "tokencb3": { nama: "Dewi Rahmawati", kelas: "XI IPS 2" }
-};
+
 
 function ig() {
   window.location.href = "https://www.instagram.com/osimman1batam/";
 }
 
+
+// ===== LOGIN PAGE =====
+
+
 function login() {
   const token = document.getElementById("token").value.trim();
 
   if (token === "") {
-    // Popup token kosong
     document.getElementById("popupkosong").classList.add("active");
     setTimeout(() => document.getElementById("kosong").classList.add("active"), 50);
     setTimeout(() => document.getElementById("kosong").classList.remove("active"), 1500);
@@ -28,23 +26,36 @@ function login() {
     return;
   }
 
-  // Jika token valid
-  if (daftarPemilih[token]) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("nama", daftarPemilih[token].nama);
-    localStorage.setItem("kelas", daftarPemilih[token].kelas);
+  // 🔹 Cek token ke GAS
+  fetch("https://script.google.com/macros/s/AKfycbwqV7l5iEq9snJzwpSpatjlQVcSyZcFHsgQsdPvW56w6dED4lTO354v1iHeIUljR1o/exec", { 
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, kandidat: "" }) // kirim kandidat kosong hanya untuk validasi token
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.result === "success") {
+        // Simpan token saja
+        localStorage.setItem("token", token);
 
-    document.getElementById("popuphsl").classList.add("active");
-    setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
-    setTimeout(() => window.location.href = "kandidat.html", 1500);
-  } else {
-    // Jika token salah
-    document.getElementById("popupgagal").classList.add("active");
-    setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
-    setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
-    setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
-  }
+        document.getElementById("popuphsl").classList.add("active");
+        setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
+        setTimeout(() => window.location.href = "kandidat.html", 1500);
+      } else if (data.result === "invalid") {
+        document.getElementById("popupgagal").classList.add("active");
+        setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
+        setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
+        setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
+      } else {
+        alert("Terjadi kesalahan saat memverifikasi token.");
+      }
+    })
+    .catch(err => {
+      console.error("Gagal verifikasi token:", err);
+      alert("Tidak dapat menghubungi server. Periksa koneksi internetmu.");
+    });
 }
+
 
 // ===== KANDIDAT PAGE =====
 function kandidat1() {
@@ -102,29 +113,41 @@ function getUserData() {
 }
 
 function kirimVote(kandidat, redirectPage) {
-  const { token, nama, kelas } = getUserData();
+  const token = localStorage.getItem("token");
 
-  if (!token || !nama || !kelas) {
-    alert("Data login tidak ditemukan. Silakan login ulang!");
+  if (!token) {
+    alert("Token tidak ditemukan. Silakan login ulang!");
     window.location.href = "index.html";
     return;
   }
 
-  // Kirim data tanpa menunggu respon
-  fetch("https://databasepilketos.vercel.app/api/proxy", {
+  // 🔹 Kirim data ke GAS (token + kandidat saja)
+  fetch("https://script.google.com/macros/s/AKfycbwqV7l5iEq9snJzwpSpatjlQVcSyZcFHsgQsdPvW56w6dED4lTO354v1iHeIUljR1o/exec", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, nama, kelas, kandidat })
-  }).catch(() => console.error("Gagal mengirim suara ke server"));
+    body: JSON.stringify({ token, kandidat }),
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.result === "success") {
+        console.log(`Vote ${kandidat} berhasil dikirim untuk ${data.nama}`);
+      } else {
+        alert("Token tidak valid atau sudah digunakan!");
+        window.location.href = "index.html";
+      }
+    })
+    .catch(err => {
+      console.error("Gagal kirim suara:", err);
+      alert("Terjadi kesalahan saat mengirim suara.");
+    });
 
-  // Hapus data login agar tidak bisa balik lagi
+  // 🔹 Hapus token agar tidak bisa balik
   localStorage.removeItem("token");
-  localStorage.removeItem("nama");
-  localStorage.removeItem("kelas");
 
-  // Redirect langsung
+  // 🔹 Pindah ke halaman selesai
   window.location.href = redirectPage;
 }
+
 
 function pilkand1() { kirimVote("Kandidat 1", "donepage1.html"); }
 function pilkand2() { kirimVote("Kandidat 2", "donepage2.html"); }
@@ -148,3 +171,4 @@ window.onload = function () {
     }
   }, 1000);
 };
+
