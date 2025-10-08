@@ -2,52 +2,42 @@ window.addEventListener("load", function() {
   document.body.classList.add("loaded");
 });
 
-
-
-// Token, nama, dan kelas
-
+// ===== LOGIN PAGE =====
 
 function ig() {
   window.location.href = "https://www.instagram.com/osimman1batam/";
 }
 
-
-// ===== LOGIN PAGE =====
-
-
 function login() {
   const token = document.getElementById("token").value.trim();
 
   if (token === "") {
-    // tampilkan popup kosong seperti biasa
+    // Popup token kosong
+    document.getElementById("popupkosong").classList.add("active");
+    setTimeout(() => document.getElementById("kosong").classList.add("active"), 50);
+    setTimeout(() => document.getElementById("kosong").classList.remove("active"), 1500);
+    setTimeout(() => document.getElementById("popupkosong").classList.remove("active"), 1600);
     return;
   }
 
+  // Kirim token ke GAS lewat proxy (tanpa menunggu respon)
   fetch("https://databasepilketos.vercel.app/api/proxy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.result === "success") {
-        localStorage.setItem("token", token);
-        localStorage.setItem("nama", data.nama);
-        localStorage.setItem("kelas", data.kelas);
-        window.location.href = "kandidat.html";
-      } else {
-        alert("Token tidak valid!");
-      }
-    })
-    .catch(err => {
-      console.error("Gagal verifikasi token:", err);
-      alert("Gagal menghubungi server.");
-    });
+    body: JSON.stringify({ token, kandidat: "Login Check" })
+  }).catch(err => console.error("Gagal kirim ke GAS:", err));
+
+  // Tampilkan popup berhasil dan lanjut ke kandidat.html
+  document.getElementById("popuphsl").classList.add("active");
+  setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
+  setTimeout(() => {
+    localStorage.setItem("token", token);
+    window.location.href = "kandidat.html";
+  }, 1500);
 }
 
-
-
 // ===== KANDIDAT PAGE =====
+
 function kandidat1() {
   document.getElementById("popup1").classList.add("active");
   setTimeout(() => document.getElementById("kand1").classList.add("active"), 50);
@@ -94,50 +84,35 @@ function pilihKand3() {
 }
 
 // ===== FIX PAGE =====
+
 function getUserData() {
   return {
     token: localStorage.getItem("token"),
-    nama: localStorage.getItem("nama"),
-    kelas: localStorage.getItem("kelas")
   };
 }
 
 function kirimVote(kandidat, redirectPage) {
-  const token = localStorage.getItem("token");
+  const { token } = getUserData();
 
   if (!token) {
-    alert("Token tidak ditemukan. Silakan login ulang!");
+    alert("Silakan login ulang!");
     window.location.href = "index.html";
     return;
   }
 
-  // 🔹 Kirim data ke GAS (token + kandidat saja)
+  // Kirim data ke GAS tanpa menunggu respon
   fetch("https://databasepilketos.vercel.app/api/proxy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, kandidat }),
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.result === "success") {
-        console.log(`Vote ${kandidat} berhasil dikirim untuk ${data.nama}`);
-      } else {
-        alert("Token tidak valid atau sudah digunakan!");
-        window.location.href = "index.html";
-      }
-    })
-    .catch(err => {
-      console.error("Gagal kirim suara:", err);
-      alert("Terjadi kesalahan saat mengirim suara.");
-    });
+    body: JSON.stringify({ token, kandidat })
+  }).catch(() => console.error("Gagal mengirim suara ke server"));
 
-  // 🔹 Hapus token agar tidak bisa balik
+  // Hapus token agar tidak bisa akses lagi
   localStorage.removeItem("token");
 
-  // 🔹 Pindah ke halaman selesai
+  // Langsung redirect ke donepage
   window.location.href = redirectPage;
 }
-
 
 function pilkand1() { kirimVote("Kandidat 1", "donepage1.html"); }
 function pilkand2() { kirimVote("Kandidat 2", "donepage2.html"); }
@@ -149,7 +124,7 @@ function awal() { window.location.href = "index.html"; }
 // ===== DONE PAGE =====
 window.onload = function () {
   const countdownElement = document.getElementById("countdown");
-  if (!countdownElement) return; // biar gak error di halaman lain
+  if (!countdownElement) return;
 
   let count = 5;
   const timer = setInterval(() => {
@@ -161,7 +136,3 @@ window.onload = function () {
     }
   }, 1000);
 };
-
-
-
-
