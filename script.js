@@ -20,20 +20,40 @@ function login() {
     return;
   }
 
-  // Kirim token ke GAS lewat proxy (tanpa menunggu respon)
+  // Validasi token ke GAS lewat proxy
   fetch("https://databasepilketos.vercel.app/api/proxy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, kandidat: "Login Check" })
-  }).catch(err => console.error("Gagal kirim ke GAS:", err));
-
-  // Tampilkan popup berhasil dan lanjut ke kandidat.html
-  document.getElementById("popuphsl").classList.add("active");
-  setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
-  setTimeout(() => {
-    localStorage.setItem("token", token);
-    window.location.href = "kandidat.html";
-  }, 1500);
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.result === "ok") {
+      // Token valid & belum digunakan
+      document.getElementById("popuphsl").classList.add("active");
+      setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
+      setTimeout(() => {
+        localStorage.setItem("token", token);
+        window.location.href = "kandidat.html";
+      }, 1500);
+    } else if (data.result === "used") {
+      // Token sudah digunakan
+      document.getElementById("popupgagal").classList.add("active");
+      setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
+      setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
+      setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
+    } else {
+      // Token salah
+      document.getElementById("popupgagal").classList.add("active");
+      setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
+      setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
+      setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
+    }
+  })
+  .catch(err => {
+    console.error("Gagal validasi ke GAS:", err);
+    alert("Gagal menghubungi server, coba lagi!");
+  });
 }
 
 // ===== KANDIDAT PAGE =====
@@ -136,3 +156,4 @@ window.onload = function () {
     }
   }, 1000);
 };
+
