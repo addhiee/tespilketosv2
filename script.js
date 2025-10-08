@@ -8,11 +8,11 @@ function ig() {
   window.location.href = "https://www.instagram.com/osimman1batam/";
 }
 
-function login() {
+async function login() {
   const token = document.getElementById("token").value.trim();
 
   if (token === "") {
-    // Popup token kosong
+    // popup token kosong
     document.getElementById("popupkosong").classList.add("active");
     setTimeout(() => document.getElementById("kosong").classList.add("active"), 50);
     setTimeout(() => document.getElementById("kosong").classList.remove("active"), 1500);
@@ -20,20 +20,52 @@ function login() {
     return;
   }
 
-  // Kirim token ke GAS lewat proxy (tanpa menunggu respon)
-  fetch("https://databasepilketos.vercel.app/api/proxy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, kandidat: "Login Check" })
-  }).catch(err => console.error("Gagal kirim ke GAS:", err));
+  try {
+    // kirim token ke GAS untuk dicek validitasnya
+    const response = await fetch("https://databasepilketos.vercel.app/api/proxy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, kandidat: "Login Check" })
+    });
 
-  // Tampilkan popup berhasil dan lanjut ke kandidat.html
-  document.getElementById("popuphsl").classList.add("active");
-  setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
-  setTimeout(() => {
-    localStorage.setItem("token", token);
-    window.location.href = "kandidat.html";
-  }, 1500);
+    const resultText = await response.text(); // ambil dulu text mentah
+    let result;
+
+    try {
+      result = JSON.parse(resultText); // coba parse ke JSON
+    } catch (e) {
+      console.warn("Respon bukan JSON:", resultText);
+      result = { result: "error", message: "Invalid JSON response" };
+    }
+
+    // kalau server unreachable
+    if (!response.ok) {
+      throw new Error("Server error: " + response.status);
+    }
+
+    // cek hasil dari GAS
+    if (result.result === "ok") {
+      // token valid
+      localStorage.setItem("token", token);
+      document.getElementById("popuphsl").classList.add("active");
+      setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
+      setTimeout(() => window.location.href = "kandidat.html", 1500);
+
+    } else if (result.result === "invalid") {
+      // token salah
+      document.getElementById("popupgagal").classList.add("active");
+      setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
+      setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
+      setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
+
+    } else {
+      alert("Respon server tidak dikenali: " + resultText);
+    }
+
+  } catch (error) {
+    console.error("Gagal terhubung ke server:", error);
+    alert("Gagal menghubungi server. Pastikan koneksi dan server aktif.");
+  }
 }
 
 // ===== KANDIDAT PAGE =====
@@ -42,12 +74,10 @@ function kandidat1() {
   document.getElementById("popup1").classList.add("active");
   setTimeout(() => document.getElementById("kand1").classList.add("active"), 50);
 }
-
 function closePopup1() {
   document.getElementById("kand1").classList.remove("active");
   setTimeout(() => document.getElementById("popup1").classList.remove("active"), 500);
 }
-
 function pilihKand1() {
   closePopup1();
   setTimeout(() => window.location.href = "fixpage1.html", 1000);
@@ -57,12 +87,10 @@ function kandidat2() {
   document.getElementById("popup2").classList.add("active");
   setTimeout(() => document.getElementById("kand2").classList.add("active"), 50);
 }
-
 function closePopup2() {
   document.getElementById("kand2").classList.remove("active");
   setTimeout(() => document.getElementById("popup2").classList.remove("active"), 500);
 }
-
 function pilihKand2() {
   closePopup2();
   setTimeout(() => window.location.href = "fixpage2.html", 1000);
@@ -72,12 +100,10 @@ function kandidat3() {
   document.getElementById("popup3").classList.add("active");
   setTimeout(() => document.getElementById("kand3").classList.add("active"), 50);
 }
-
 function closePopup3() {
   document.getElementById("kand3").classList.remove("active");
   setTimeout(() => document.getElementById("popup3").classList.remove("active"), 500);
 }
-
 function pilihKand3() {
   closePopup3();
   setTimeout(() => window.location.href = "fixpage3.html", 1000);
@@ -91,7 +117,7 @@ function getUserData() {
   };
 }
 
-function kirimVote(kandidat, redirectPage) {
+async function kirimVote(kandidat, redirectPage) {
   const { token } = getUserData();
 
   if (!token) {
@@ -100,17 +126,21 @@ function kirimVote(kandidat, redirectPage) {
     return;
   }
 
-  // Kirim data ke GAS tanpa menunggu respon
-  fetch("https://databasepilketos.vercel.app/api/proxy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, kandidat })
-  }).catch(() => console.error("Gagal mengirim suara ke server"));
+  try {
+    const response = await fetch("https://databasepilketos.vercel.app/api/proxy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, kandidat })
+    });
 
-  // Hapus token agar tidak bisa akses lagi
+    const text = await response.text();
+    console.log("Vote response:", text);
+
+  } catch (err) {
+    console.error("Gagal mengirim suara:", err);
+  }
+
   localStorage.removeItem("token");
-
-  // Langsung redirect ke donepage
   window.location.href = redirectPage;
 }
 
@@ -136,5 +166,3 @@ window.onload = function () {
     }
   }, 1000);
 };
-
-
