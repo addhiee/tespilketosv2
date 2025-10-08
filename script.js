@@ -23,7 +23,7 @@ function login() {
     return;
   }
 
-  fetch("https://script.google.com/macros/s/AKfycbwqV7l5iEq9snJzwpSpatjljQvcSyZcFHsgQsPdPwW56dS.../exec", {
+  fetch("https://databasepilketos.vercel.app/api/proxy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token })
@@ -112,7 +112,7 @@ function kirimVote(kandidat, redirectPage) {
   }
 
   // 🔹 Kirim data ke GAS (token + kandidat saja)
-  fetch("https://script.google.com/macros/s/AKfycbwqV7l5iEq9snJzwpSpatjlQVcSyZcFHsgQsdPvW56w6dED4lTO354v1iHeIUljR1o/exec", {
+  fetch("https://databasepilketos.vercel.app/api/proxy", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, kandidat }),
@@ -161,6 +161,7 @@ window.onload = function () {
     }
   }, 1000);
 };
+
 
 
 
