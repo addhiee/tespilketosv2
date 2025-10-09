@@ -2,17 +2,17 @@ window.addEventListener("load", function() {
   document.body.classList.add("loaded");
 });
 
-// ===== LOGIN PAGE =====
-
 function ig() {
   window.location.href = "https://www.instagram.com/osimman1batam/";
 }
+
+// ===== LOGIN PAGE =====
 
 async function login() {
   const token = document.getElementById("token").value.trim();
 
   if (token === "") {
-    // popup token kosong
+
     document.getElementById("popupkosong").classList.add("active");
     setTimeout(() => document.getElementById("kosong").classList.add("active"), 50);
     setTimeout(() => document.getElementById("kosong").classList.remove("active"), 1500);
@@ -21,38 +21,36 @@ async function login() {
   }
 
   try {
-    // kirim token ke GAS untuk dicek validitasnya
+
     const response = await fetch("https://databasepilketos.vercel.app/api/proxy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, kandidat: "Login Check" })
     });
 
-    const resultText = await response.text(); // ambil dulu text mentah
+    const resultText = await response.text();
     let result;
 
     try {
-      result = JSON.parse(resultText); // coba parse ke JSON
+      result = JSON.parse(resultText); 
     } catch (e) {
       console.warn("Respon bukan JSON:", resultText);
       result = { result: "error", message: "Invalid JSON response" };
     }
 
-    // kalau server unreachable
+
     if (!response.ok) {
       throw new Error("Server error: " + response.status);
     }
 
-    // cek hasil dari GAS
+
     if (result.result === "ok") {
-      // token valid
       localStorage.setItem("token", token);
       document.getElementById("popuphsl").classList.add("active");
       setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
       setTimeout(() => window.location.href = "kandidat.html", 1500);
 
     } else if (result.result === "invalid") {
-      // token salah
       document.getElementById("popupgagal").classList.add("active");
       setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
       setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
@@ -151,6 +149,7 @@ function pilkand3() { kirimVote("Kandidat 3", "donepage3.html"); }
 function back() { window.location.href = "kandidat.html"; }
 function awal() { window.location.href = "index.html"; }
 
+
 // ===== DONE PAGE =====
 window.onload = function () {
   const countdownElement = document.getElementById("countdown");
@@ -166,3 +165,4 @@ window.onload = function () {
     }
   }, 1000);
 };
+
