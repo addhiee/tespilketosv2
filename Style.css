@@ -427,8 +427,6 @@ label {
 
 #loadingAnim {
   background: transparent;
-  width: 500px !important;
-  height: 282px !important;
   text-align: center;
   color: white;
   display: flex;
@@ -436,19 +434,7 @@ label {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  transform: scale(1.2); /* buat animasinya lebih besar */
-}
-
-/*#loadingAnim dotlottie-wc {
-  width: 250px !important;
-  height: 150px !important;
-}
-
-#loadingAnim p {
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}*/
+ }
 
 
 
