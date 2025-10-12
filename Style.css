@@ -414,7 +414,7 @@ label {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.75);
   display: none;
   align-items: center;
   justify-content: center;
@@ -427,9 +427,27 @@ label {
 
 #loadingAnim {
   text-align: center;
-  background: transparent;
   color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  transform: scale(1.2); /* buat animasinya lebih besar */
 }
+
+#loadingAnim dotlottie-wc {
+  width: 250px !important;
+  height: 250px !important;
+}
+
+#loadingAnim p {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+
 
 
 
