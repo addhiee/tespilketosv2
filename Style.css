@@ -18,7 +18,6 @@ body {
      }
 
 .fullscreen {
-  /*background-color: #212121;*/
   width: 100%;
   height: 100%;
   flex-direction: column;
@@ -359,12 +358,8 @@ label {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  /* overlay solid hitam, tanpa blur */
   background-color: rgba(0, 0, 0, 0.6); 
   backdrop-filter: none !important;
-
-  /* pastikan di atas semua elemen */
   z-index: 99999 ;
 
   opacity: 0;
@@ -390,7 +385,7 @@ label {
   align-items: center;
   justify-content: center;
 
-  z-index: 100000 !important; /* lebih tinggi dari overlay */
+  z-index: 100000 !important; 
   transform: scale(0.1);
   transition: transform 0.3s ease-in-out;
 }
@@ -429,6 +424,7 @@ label {
   height: 253px !important;
   transform: scale(1.1);
 }
+
 
 
 
