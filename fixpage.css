@@ -287,8 +287,6 @@ body {
 
 #loadingAnim {
   background: transparent;
-  width: 500px !important;
-  height: 282px !important;
   text-align: center;
   color: white;
   display: flex;
@@ -296,6 +294,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  transform: scale(1.2); /* buat animasinya lebih besar */
+
 }
+
 
