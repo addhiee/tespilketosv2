@@ -153,11 +153,6 @@ async function kirimVote(kandidat, redirectPage) {
   }
 }
 
-
-  localStorage.removeItem("token");
-  window.location.href = redirectPage;
-}
-
 function pilkand1() { kirimVote("Kandidat 1", "donepage1.html"); }
 function pilkand2() { kirimVote("Kandidat 2", "donepage2.html"); }
 function pilkand3() { kirimVote("Kandidat 3", "donepage3.html"); }
@@ -181,6 +176,7 @@ window.onload = function () {
     }
   }, 1000);
 };
+
 
 
 
