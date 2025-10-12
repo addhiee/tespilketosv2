@@ -119,7 +119,7 @@ body {
       width: 100%; 
       height: 100%;
       height: max-content;    
-      margin: 2% 0%;     
+      margin: 1.5% 0%;     
       gap: 50px;              
       overflow: hidden;
       min-height: max-content;
@@ -391,4 +391,5 @@ body {
    .kandmisi {
     width: 100%;
     }
+
 
