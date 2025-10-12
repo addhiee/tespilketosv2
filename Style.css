@@ -428,7 +428,7 @@ label {
 #loadingAnim {
   background: transparent;
   width: 350px !important;
-  height: 300px !important;
+  height: 200px !important;
   text-align: center;
   color: white;
   display: flex;
@@ -449,6 +449,7 @@ label {
   font-weight: 500;
   letter-spacing: 0.5px;
 }*/
+
 
 
 
