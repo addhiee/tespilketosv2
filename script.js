@@ -12,7 +12,6 @@ async function login() {
   const token = document.getElementById("token").value.trim();
 
   if (token === "") {
-
     document.getElementById("popupkosong").classList.add("active");
     setTimeout(() => document.getElementById("kosong").classList.add("active"), 50);
     setTimeout(() => document.getElementById("kosong").classList.remove("active"), 1500);
@@ -20,8 +19,11 @@ async function login() {
     return;
   }
 
-  try {
+  // === Tampilkan animasi loading ===
+  const loading = document.getElementById("loading");
+  loading.classList.add("active");
 
+  try {
     const response = await fetch("https://databasepilketos.vercel.app/api/proxy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,39 +34,41 @@ async function login() {
     let result;
 
     try {
-      result = JSON.parse(resultText); 
-    } catch (e) {
+      result = JSON.parse(resultText);
+    } catch {
       console.warn("Respon bukan JSON:", resultText);
-      result = { result: "error", message: "Invalid JSON response" };
+      result = { result: "error", message: "Respon server tidak valid" };
     }
 
-
-    if (!response.ok) {
-      throw new Error("Server error: " + response.status);
-    }
-
+    // === Tutup loading setelah respon diterima ===
+    loading.classList.remove("active");
 
     if (result.result === "ok") {
+      // Login sukses
       localStorage.setItem("token", token);
       document.getElementById("popuphsl").classList.add("active");
       setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
       setTimeout(() => window.location.href = "kandidat.html", 1500);
 
-    } else if (result.result === "invalid") {
+    } else if (result.result === "invalid" || result.result === "used") {
+      // Token salah atau sudah digunakan
       document.getElementById("popupgagal").classList.add("active");
       setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
       setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
       setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
 
     } else {
-      alert("Respon server tidak dikenali: " + resultText);
+      // Jika server kirim pesan aneh
+      alert("Respon tidak dikenali: " + resultText);
     }
 
   } catch (error) {
     console.error("Gagal terhubung ke server:", error);
-    alert("Gagal menghubungi server. Pastikan koneksi dan server aktif.");
+    loading.classList.remove("active");
+    alert("⚠️ Gagal menghubungi server. Pastikan koneksi aktif.");
   }
 }
+
 
 // ===== KANDIDAT PAGE =====
 
@@ -165,4 +169,5 @@ window.onload = function () {
     }
   }, 1000);
 };
+
 
