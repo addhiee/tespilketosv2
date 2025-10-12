@@ -427,6 +427,8 @@ label {
 
 #loadingAnim {
   background: transparent;
+  width: 250px !important;
+  height: 250px !important;
   text-align: center;
   color: white;
   display: flex;
@@ -434,7 +436,9 @@ label {
   align-items: center;
   justify-content: center;
   gap: 20px;
+  transform: scale (1.2);
  }
+
 
 
 
