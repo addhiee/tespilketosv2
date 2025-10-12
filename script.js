@@ -121,12 +121,15 @@ function getUserData() {
 
 async function kirimVote(kandidat, redirectPage) {
   const { token } = getUserData();
-
   if (!token) {
     alert("Silakan login ulang!");
     window.location.href = "index.html";
     return;
   }
+
+  // 🔹 Tampilkan animasi loading
+  const loading = document.getElementById("loading");
+  loading.classList.add("active");
 
   try {
     const response = await fetch("https://databasepilketos.vercel.app/api/proxy", {
@@ -138,9 +141,18 @@ async function kirimVote(kandidat, redirectPage) {
     const text = await response.text();
     console.log("Vote response:", text);
 
+    // 🔹 Sembunyikan loading dan redirect
+    loading.classList.remove("active");
+    localStorage.removeItem("token");
+    window.location.href = redirectPage;
+
   } catch (err) {
     console.error("Gagal mengirim suara:", err);
+    loading.classList.remove("active");
+    alert("Terjadi kesalahan saat mengirim data. Coba lagi.");
   }
+}
+
 
   localStorage.removeItem("token");
   window.location.href = redirectPage;
@@ -169,5 +181,6 @@ window.onload = function () {
     }
   }, 1000);
 };
+
 
 
