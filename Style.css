@@ -426,6 +426,7 @@ label {
 }
 
 #loadingAnim {
+  background: transparent;
   text-align: center;
   color: white;
   display: flex;
@@ -437,8 +438,8 @@ label {
 }
 
 #loadingAnim dotlottie-wc {
-  width: 250px !important;
-  height: 250px !important;
+  width: 150px !important;
+  height: 150px !important;
 }
 
 #loadingAnim p {
@@ -446,6 +447,7 @@ label {
   font-weight: 500;
   letter-spacing: 0.5px;
 }
+
 
 
 
