@@ -19,7 +19,6 @@ async function login() {
     return;
   }
 
-  // === Tampilkan animasi loading ===
   const loading = document.getElementById("loading");
   loading.classList.add("active");
 
@@ -40,25 +39,25 @@ async function login() {
       result = { result: "error", message: "Respon server tidak valid" };
     }
 
-    // === Tutup loading setelah respon diterima ===
+
     loading.classList.remove("active");
 
     if (result.result === "ok") {
-      // Login sukses
+
       localStorage.setItem("token", token);
       document.getElementById("popuphsl").classList.add("active");
       setTimeout(() => document.getElementById("berhasil").classList.add("active"), 50);
       setTimeout(() => window.location.href = "kandidat.html", 1500);
 
     } else if (result.result === "invalid" || result.result === "used") {
-      // Token salah atau sudah digunakan
+
       document.getElementById("popupgagal").classList.add("active");
       setTimeout(() => document.getElementById("gagal").classList.add("active"), 50);
       setTimeout(() => document.getElementById("gagal").classList.remove("active"), 1500);
       setTimeout(() => document.getElementById("popupgagal").classList.remove("active"), 1600);
 
     } else {
-      // Jika server kirim pesan aneh
+
       alert("Respon tidak dikenali: " + resultText);
     }
 
@@ -127,7 +126,7 @@ async function kirimVote(kandidat, redirectPage) {
     return;
   }
 
-  // 🔹 Tampilkan animasi loading
+
   const loading = document.getElementById("loading");
   loading.classList.add("active");
 
@@ -141,7 +140,7 @@ async function kirimVote(kandidat, redirectPage) {
     const text = await response.text();
     console.log("Vote response:", text);
 
-    // 🔹 Sembunyikan loading dan redirect
+
     loading.classList.remove("active");
     localStorage.removeItem("token");
     window.location.href = redirectPage;
@@ -176,6 +175,7 @@ window.onload = function () {
     }
   }, 1000);
 };
+
 
 
 
