@@ -3,7 +3,7 @@ body {
   margin: 0;
   font-family: Poppins;
   max-width: 100%;
-  background-image: url('assets/LOGINBG.jpg');
+  background-image: url('LOGINBG.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -256,4 +256,5 @@ label {
     font-size: 20px;
   }
 }
+
 
